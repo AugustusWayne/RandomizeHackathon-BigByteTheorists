@@ -11,28 +11,19 @@ import wikipedia
 import webbrowser
 import os
 import pickle
-import os.path
+import os.path    
 import winshell
 import pyjokes
-import feedparser
-import smtplib
 import ctypes
 import time
 import requests
 import shutil
-from twilio.rest import Client
 from clint.textui import progress
 from ecapture import ecapture as ec
-from bs4 import BeautifulSoup
-import win32com.client as wincl
-from urllib.request import urlopen
-from googleapiclient.discovery import build
-from google_auth_oauthlib.flow import InstalledAppFlow
-from google.auth.transport.requests import Request
 import os
 import pyttsx3
 import speech_recognition as sr
-from datetime import date
+
 
 engine = pyttsx3.init('sapi5')
 voices = engine.getProperty('voices')
@@ -132,7 +123,6 @@ if __name__ == '__main__':
             strTime = datetime.datetime.now().strftime("%H:%M:%S")
             speak(f"Sure, the time is {strTime}")
 
-
         elif 'how are you' in query:
             speak("I am fine, Thank you")
             speak("How are you?")
@@ -178,9 +168,8 @@ if __name__ == '__main__':
         elif 'who am i' in query:
             speak("If you talk then definitely your human.")
 
-        elif 'why you came to world' in query:
+        elif 'why were you created' in query:
             speak("To help you")
-
 
         elif 'what is love' in query:
             speak("It is the 7th sense that destroy all other senses")
@@ -245,6 +234,7 @@ if __name__ == '__main__':
                 file.write(note)
             else:
                 file.write(note)
+            file.close()
 
         elif "show note" in query:
             speak("Showing Notes")
@@ -282,13 +272,13 @@ if __name__ == '__main__':
                 y = x['main']
                 current_temperature = y["temp"]
                 current_pressure = y["pressure"]
-                current_humidiy = y["humidity"]
+                current_humidity = y["humidity"]
                 z = x["weather"]
                 weather_description = z[0]["description"]
                 speak(" Temperature (in kelvin unit) = " + str(
                     current_temperature) + "\n atmospheric pressure (in hPa unit) =" + str(
                     current_pressure) + "\n humidity (in percentage) = " + str(
-                    current_humidiy) + "\n description = " + str(weather_description))
+                    current_humidity) + "\n description = " + str(weather_description))
 
             else:
                 speak(" City Not Found ")
@@ -306,10 +296,10 @@ if __name__ == '__main__':
         elif "will you be my gf" in query or "will you be my bf" in query:
             speak("I'm not sure about, may be you should give me some time")
 
-        elif "how are you" in query:
+        elif "how are you" in query or "how r u" in query:
             speak("I'm fine, glad you me that")
 
-        elif "i love u" in query:
+        elif "i love u" in query or "i love you" in query:
             speak("It's hard to understand")
 
         elif "what is" in query or "who is" in query:
@@ -321,7 +311,4 @@ if __name__ == '__main__':
                 speak(next(res.results).text)
             except StopIteration:
                 print("No results")
-
-    # elif "" in query:
-    # Command go here
-    # For adding more commands
+                
