@@ -1,5 +1,4 @@
 import subprocess
-import openai
 import wolframalpha
 import pyttsx3
 import tkinter
@@ -25,53 +24,46 @@ from ecapture import ecapture as ec
 from bs4 import BeautifulSoup
 import win32com.client as wincl
 from urllib.request import urlopen
+
 engine = pyttsx3.init('sapi5')
 voices = engine.getProperty('voices')
 engine.setProperty('voice', voices[1].id)
-
 
 def speak(audio):
     engine.say(audio)
     engine.runAndWait()
 
-
 def wishMe():
     hour = int(datetime.datetime.now().hour)
     if hour >= 0 and hour < 12:
-        speak("Good Morning Sir !")
+        speak("Good Morning")
 
     elif hour >= 12 and hour < 18:
-        speak("Good Afternoon Sir !")
+        speak("Good Afternoon")
 
     else:
-        speak("Good Evening Sir !")
+        speak("Good Evening")
 
-    assname = ("Aura")
-    speak("I am your Assistant")
-    speak(assname)
-
+    askname = ("Aura")
+    speak("I am your Personal Assistant")
+    speak(askname)
 
 def username():
-    speak("What should i call you sir")
+    speak("What should i call you")
     uname = takeCommand()
-    speak("Welcome Mister")
+    speak("Welcome ")
     speak(uname)
     columns = shutil.get_terminal_size().columns
-
-    print("#####################".center(columns))
-    print("Welcome Mr.", uname.center(columns))
-    print("#####################".center(columns))
-
+    print("###################".center(columns))
+    print("Welcome", uname.center(columns))
+    print("###################".center(columns))
     speak("How can i Help you, Sir")
-
 
 def takeCommand():
     r = sr.Recognizer()
-
     with sr.Microphone() as source:
-
         print("Listening...")
-        r.pause_threshold = 1
+        r.pause_threshold =0.5
         audio = r.listen(source)
 
     try:
@@ -82,10 +74,9 @@ def takeCommand():
     except Exception as e:
         print(e)
         print("Unable to Recognize your voice.")
-        return "None"
+        return "Default User"
 
     return query
-
 
 def sendEmail(to, content):
     server = smtplib.SMTP('smtp.gmail.com', 587)
@@ -93,10 +84,9 @@ def sendEmail(to, content):
     server.starttls()
 
     # Enable low security in gmail
-    server.login('your email id', 'your email password')
-    server.sendmail('your email id', to, content)
+    server.login('bigbytetheorists24@gmail.com', 'Th3b1gbyt3')
+    server.sendmail('bigbytetheorists24@gmail.com', to, content)
     server.close()
-
 
 if __name__ == '__main__':
     clear = lambda: os.system('cls')
@@ -131,36 +121,17 @@ if __name__ == '__main__':
             speak("Here you go to Google\n")
             webbrowser.open("google.com")
 
-        elif 'open stackoverflow' in query:
+        elif 'open stack overflow' in query:
             speak("Here you go to Stack Over flow.Happy coding")
             webbrowser.open("stackoverflow.com")
 
         elif 'play music' in query or "play song" in query:
             speak("Here you go with music")
-            # music_dir = "G:\\Song"
-            music_dir = "C:\\Users\\GAURAV\\Music"
-            songs = os.listdir(music_dir)
-            print(songs)
-            random = os.startfile(os.path.join(music_dir, songs[1]))
+            webbrowser.open("https://open.spotify.com/playlist/37i9dQZEVXbLZ52XmnySJg")
 
-        elif 'the time' in query:
-            strTime = datetime.datetime.now().strftime("% H:% M:% S")
-            speak(f"Sir, the time is {strTime}")
-
-        elif 'open opera' in query:
-            codePath = r"C:\\Users\\GAURAV\\AppData\\Local\\Programs\\Opera\\launcher.exe"
-            os.startfile(codePath)
-
-        elif 'email to gaurav' in query:
-            try:
-                speak("What should I say?")
-                content = takeCommand()
-                to = "Receiver email address"
-                sendEmail(to, content)
-                speak("Email has been sent !")
-            except Exception as e:
-                print(e)
-                speak("I am not able to send this email")
+        elif 'tell me the time'.lower() in query.lower():
+            strTime = datetime.datetime.now().strftime("%H:%M:%S")
+            speak(f"Sure, the time is {strTime}")
 
         elif 'send a mail' in query:
             try:
@@ -176,31 +147,28 @@ if __name__ == '__main__':
 
         elif 'how are you' in query:
             speak("I am fine, Thank you")
-            speak("How are you, Sir")
+            speak("How are you?")
 
         elif 'fine' in query or "good" in query:
             speak("It's good to know that your fine")
 
         elif "change my name to" in query:
             query = query.replace("change my name to", "")
-            assname = query
+            askname = query
 
         elif "change name" in query:
-            speak("What would you like to call me, Sir ")
-            assname = takeCommand()
+            speak("What would you like to call me ")
+            askname = takeCommand()
             speak("Thanks for naming me")
-
-        elif "what's your name" in query or "What is your name" in query:
-            speak("My friends call me")
-            speak(assname)
-            print("My friends call me", assname)
 
         elif 'exit' in query:
             speak("Thanks for giving me your time")
             exit()
 
         elif "who made you" in query or "who created you" in query:
-            speak("I have been created by Gaurav.")
+            speak("I was created by The Big Byte Theorists.")
+
+
 
         elif 'joke' in query:
             speak(pyjokes.get_joke())
@@ -222,37 +190,26 @@ if __name__ == '__main__':
             query = query.replace("play", "")
             webbrowser.open(query)
 
-        elif "who i am" in query:
+        elif 'who am i' in query:
             speak("If you talk then definitely your human.")
 
-        elif "why you came to world" in query:
-            speak("Thanks to Gaurav. further It's a secret")
+        elif 'why you came to world' in query:
+            speak("To help you")
 
         elif 'power point presentation' in query:
             speak("opening Power Point presentation")
             power = r"C:\\Users\\GAURAV\\Desktop\\Minor Project\\Presentation\\Voice Assistant.pptx"
             os.startfile(power)
 
-        elif 'is love' in query:
-            speak("It is 7th sense that destroy all other senses")
+        elif 'what is love' in query:
+            speak("It is the 7th sense that destroy all other senses")
 
         elif "who are you" in query:
-            speak("I am your virtual assistant created by Gaurav")
+            speak("I am your virtual assistant created by BigByteTheorists")
 
-        elif 'reason for you' in query:
-            speak("I was created as a Minor project by Mister Gaurav ")
-
-        elif 'change background' in query:
-            ctypes.windll.user32.SystemParametersInfoW(20,
-                                                       0,
-                                                       "Location of wallpaper",
-                                                       0)
-            speak("Background changed successfully")
-
-        elif 'open bluestack' in query:
-            appli = r"C:\\ProgramData\\BlueStacks\\Client\\Bluestacks.exe"
-            os.startfile(appli)
-
+        elif 'open maps' in query:
+            speak("Here you go to Google Maps\n")
+            webbrowser.open("https://www.google.com/maps")
         elif 'news' in query:
 
             try:
@@ -297,10 +254,10 @@ if __name__ == '__main__':
             location = query
             speak("User asked to Locate")
             speak(location)
-            webbrowser.open("https://www.google.nl / maps / place/" + location + "")
+            webbrowser.open("https://www.google.com/maps/search/" + location + "")
 
         elif "camera" in query or "take a photo" in query:
-            ec.capture(0, "Jarvis Camera ", "img.jpg")
+            ec.capture(0, "Aura Camera ", "img.jpg")
 
         elif "restart" in query:
             subprocess.call(["shutdown", "/r"])
@@ -317,7 +274,7 @@ if __name__ == '__main__':
         elif "write a note" in query:
             speak("What should i write, sir")
             note = takeCommand()
-            file = open('jarvis.txt', 'w')
+            file = open('aura.txt', 'w')
             speak("Sir, Should i include date and time")
             snfm = takeCommand()
             if 'yes' in snfm or 'sure' in snfm:
@@ -330,7 +287,7 @@ if __name__ == '__main__':
 
         elif "show note" in query:
             speak("Showing Notes")
-            file = open("jarvis.txt", "r")
+            file = open("aura.txt", "r")
             print(file.read())
             speak(file.read(6))
 
@@ -353,7 +310,7 @@ if __name__ == '__main__':
 
             wishMe()
             speak("Jarvis 1 point o in your service Mister")
-            speak(assname)
+            speak(askname)
 
         elif "weather" in query:
 
@@ -404,7 +361,7 @@ if __name__ == '__main__':
         elif "Good Morning" in query:
             speak("A warm" + query)
             speak("How are you Mister")
-            speak(assname)
+            speak(askname)
 
         # most asked question from google Assistant
         elif "will you be my gf" in query or "will you be my bf" in query:
