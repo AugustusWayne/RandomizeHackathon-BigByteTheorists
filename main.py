@@ -10,6 +10,8 @@ import datetime
 import wikipedia
 import webbrowser
 import os
+import pickle
+import os.path
 import winshell
 import pyjokes
 import feedparser
@@ -24,6 +26,13 @@ from ecapture import ecapture as ec
 from bs4 import BeautifulSoup
 import win32com.client as wincl
 from urllib.request import urlopen
+from googleapiclient.discovery import build
+from google_auth_oauthlib.flow import InstalledAppFlow
+from google.auth.transport.requests import Request
+import os
+import pyttsx3
+import speech_recognition as sr
+from datetime import date
 
 engine = pyttsx3.init('sapi5')
 voices = engine.getProperty('voices')
@@ -63,7 +72,7 @@ def takeCommand():
     r = sr.Recognizer()
     with sr.Microphone() as source:
         print("Listening...")
-        r.pause_threshold =0.5
+        r.pause_threshold =0.75
         audio = r.listen(source)
 
     try:
@@ -77,16 +86,6 @@ def takeCommand():
         return "Default User"
 
     return query
-
-def sendEmail(to, content):
-    server = smtplib.SMTP('smtp.gmail.com', 587)
-    server.ehlo()
-    server.starttls()
-
-    # Enable low security in gmail
-    server.login('bigbytetheorists24@gmail.com', 'Th3b1gbyt3')
-    server.sendmail('bigbytetheorists24@gmail.com', to, content)
-    server.close()
 
 if __name__ == '__main__':
     clear = lambda: os.system('cls')
@@ -133,17 +132,6 @@ if __name__ == '__main__':
             strTime = datetime.datetime.now().strftime("%H:%M:%S")
             speak(f"Sure, the time is {strTime}")
 
-        elif 'send a mail' in query:
-            try:
-                speak("What should I say?")
-                content = takeCommand()
-                speak("whome should i send")
-                to = input()
-                sendEmail(to, content)
-                speak("Email has been sent !")
-            except Exception as e:
-                print(e)
-                speak("I am not able to send this email")
 
         elif 'how are you' in query:
             speak("I am fine, Thank you")
@@ -168,21 +156,18 @@ if __name__ == '__main__':
         elif "who made you" in query or "who created you" in query:
             speak("I was created by The Big Byte Theorists.")
 
-
-
         elif 'joke' in query:
             speak(pyjokes.get_joke())
 
-        elif "calculate" in query:
-
-            app_id = "Wolframalpha api id"
+        elif "make a google search" in query:
+            speak("What do you want me to search")
+            question=takeCommand()
+            app_id = "LT459W-8LVHQ87PW6"
             client = wolframalpha.Client(app_id)
-            indx = query.lower().split().index('calculate')
-            query = query.split()[indx + 1:]
-            res = client.query(' '.join(query))
+            res = client.query(question)
+            # Includes only text from the response
             answer = next(res.results).text
-            print("The answer is " + answer)
-            speak("The answer is " + answer)
+            speak(answer)
 
         elif 'search' in query or 'play' in query:
 
@@ -196,10 +181,6 @@ if __name__ == '__main__':
         elif 'why you came to world' in query:
             speak("To help you")
 
-        elif 'power point presentation' in query:
-            speak("opening Power Point presentation")
-            power = r"C:\\Users\\GAURAV\\Desktop\\Minor Project\\Presentation\\Voice Assistant.pptx"
-            os.startfile(power)
 
         elif 'what is love' in query:
             speak("It is the 7th sense that destroy all other senses")
@@ -210,26 +191,6 @@ if __name__ == '__main__':
         elif 'open maps' in query:
             speak("Here you go to Google Maps\n")
             webbrowser.open("https://www.google.com/maps")
-        elif 'news' in query:
-
-            try:
-                jsonObj = urlopen(
-                    '''https://newsapi.org / v1 / articles?source = the-times-of-india&sortBy = top&apiKey =\\times of India Api key\\''')
-                data = json.load(jsonObj)
-                i = 1
-
-                speak('here are some top news from the times of india')
-                print('''=============== TIMES OF INDIA ============''' + '\n')
-
-                for item in data['articles']:
-                    print(str(i) + '. ' + item['title'] + '\n')
-                    print(item['description'] + '\n')
-                    speak(str(i) + '. ' + item['title'] + '\n')
-                    i += 1
-            except Exception as e:
-
-                print(str(e))
-
 
         elif 'lock window' in query:
             speak("locking the device")
@@ -244,7 +205,7 @@ if __name__ == '__main__':
             speak("Recycle Bin Recycled")
 
         elif "don't listen" in query or "stop listening" in query:
-            speak("for how much time you want to stop jarvis from listening commands")
+            speak("for how much time you want to stop Aura from listening commands")
             a = int(takeCommand())
             time.sleep(a)
             print(a)
@@ -276,9 +237,9 @@ if __name__ == '__main__':
             note = takeCommand()
             file = open('aura.txt', 'w')
             speak("Sir, Should i include date and time")
-            snfm = takeCommand()
-            if 'yes' in snfm or 'sure' in snfm:
-                strTime = datetime.datetime.now().strftime("% H:% M:% S")
+            snmp = takeCommand()
+            if 'yes' in snmp or 'sure' in snmp:
+                strTime = datetime.datetime.now().strftime("%H:%M:%S")
                 file.write(strTime)
                 file.write(" :- ")
                 file.write(note)
@@ -305,34 +266,26 @@ if __name__ == '__main__':
                     if ch:
                         Pypdf.write(ch)
 
-        # NPPR9-FWDCX-D2C8J-H872K-2YT43
-        elif "jarvis" in query:
-
-            wishMe()
-            speak("Jarvis 1 point o in your service Mister")
-            speak(askname)
-
         elif "weather" in query:
 
             # Google Open weather website
             # to get API of Open weather
-            api_key = "Api key"
-            base_url = "http://api.openweathermap.org / data / 2.5 / weather?"
+            api_key = "006e9c57bf003ca6d75a843a104ba3ac"
             speak(" City name ")
             print("City name : ")
             city_name = takeCommand()
-            complete_url = base_url + "appid =" + api_key + "&q =" + city_name
+            complete_url = 'http://api.openweathermap.org/data/2.5/weather?q={}&appid={}&units=metric'.format(city_name,api_key)
             response = requests.get(complete_url)
-            x = response.json()
 
-            if x["code"] != "404":
-                y = x["main"]
+            if response.status_code == 200:
+                x=response.json()
+                y = x['main']
                 current_temperature = y["temp"]
                 current_pressure = y["pressure"]
                 current_humidiy = y["humidity"]
                 z = x["weather"]
                 weather_description = z[0]["description"]
-                print(" Temperature (in kelvin unit) = " + str(
+                speak(" Temperature (in kelvin unit) = " + str(
                     current_temperature) + "\n atmospheric pressure (in hPa unit) =" + str(
                     current_pressure) + "\n humidity (in percentage) = " + str(
                     current_humidiy) + "\n description = " + str(weather_description))
@@ -340,20 +293,6 @@ if __name__ == '__main__':
             else:
                 speak(" City Not Found ")
 
-        elif "send message " in query:
-            # You need to create an account on Twilio to use this service
-            account_sid = 'Account Sid key'
-            auth_token = 'Auth token'
-            client = Client(account_sid, auth_token)
-
-            message = client.messages \
-                .create(
-                body=takeCommand(),
-                from_='Sender No',
-                to='Receiver No'
-            )
-
-            print(message.sid)
 
         elif "wikipedia" in query:
             webbrowser.open("wikipedia.com")
@@ -370,16 +309,13 @@ if __name__ == '__main__':
         elif "how are you" in query:
             speak("I'm fine, glad you me that")
 
-        elif "i love you" in query:
+        elif "i love u" in query:
             speak("It's hard to understand")
 
         elif "what is" in query or "who is" in query:
 
-            # Use the same API key
-            # that we have generated earlier
-            client = wolframalpha.Client("API_ID")
+            client = wolframalpha.Client("LT459W-8LVHQ87PW6")
             res = client.query(query)
-
             try:
                 print(next(res.results).text)
                 speak(next(res.results).text)
