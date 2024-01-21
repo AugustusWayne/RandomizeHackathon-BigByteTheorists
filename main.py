@@ -224,7 +224,7 @@ def process(q):
         time.sleep(a)
         print(a)
 
-    elif "where is" in query:
+    elif "where is" in query or "Set destintion for" in query:
         query = query.replace("where is", "")
         location = query
         speak("User asked to Locate")
@@ -281,6 +281,7 @@ def process(q):
         for ar in articles:
             head.append(ar["title"])
         for i in range(len(day)):
+            window.set_msg(f"today's {day[i]} news is: {head[i]}")
             speak(f"today's {day[i]} news is: {head[i]}")
 
     elif "weather" in query:
